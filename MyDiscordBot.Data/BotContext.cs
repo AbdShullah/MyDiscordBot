@@ -10,6 +10,8 @@ namespace MyDiscordBot.Data
             Database.Migrate();
         }
 
+        public DbSet<GuildSettings> GuildsSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
@@ -18,10 +20,8 @@ namespace MyDiscordBot.Data
             modelBuilder
                 .Entity<GuildSettings>()
                 .Property(x => x.GuildId).HasConversion(v => (long) v, v => (ulong) v);
-            
+
             base.OnModelCreating(modelBuilder);
         }
-
-        public DbSet<GuildSettings> GuildsSettings { get; set; }
     }
 }

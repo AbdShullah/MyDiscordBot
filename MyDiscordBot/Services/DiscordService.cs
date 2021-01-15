@@ -9,20 +9,24 @@ using DSharpPlus.Interactivity.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyDiscordBot.Commands;
+using MyDiscordBot.Data;
 using Serilog;
 
 namespace MyDiscordBot.Services
 {
     public class DiscordService
     {
+        private readonly GuildSettingsCache _guildSettingsCache;
         private readonly ILogger<DiscordService> _logger;
 
         public DiscordService(
             IServiceProvider services,
             ILoggerFactory loggerFactory,
+            GuildSettingsCache guildSettingsCache,
             IOptions<DiscordOptions> options,
             ILogger<DiscordService> logger)
         {
+            _guildSettingsCache = guildSettingsCache;
             _logger = logger;
             // Discord configuration
             var discordOptions = options.Value;
@@ -35,9 +39,10 @@ namespace MyDiscordBot.Services
                 LoggerFactory = loggerFactory.AddSerilog()
             };
             // Commands configuration
+            Prefix = discordOptions.Prefix;
             var commandsConfiguration = new CommandsNextConfiguration
             {
-                StringPrefixes = discordOptions.Prefixes,
+                PrefixResolver = PrefixResolver,
                 Services = services
             };
             // Interactivity configuration
@@ -56,6 +61,23 @@ namespace MyDiscordBot.Services
         public DiscordClient Discord { get; }
         public CommandsNextExtension Commands { get; }
         public InteractivityExtension Interactivity { get; }
+
+        public string Prefix { get; init; }
+
+
+        private async Task<int> PrefixResolver(DiscordMessage message)
+        {
+            var prefix = GetServerPrefix(message.Channel.Guild);
+            prefix ??= Prefix;
+            return message.GetStringPrefixLength(prefix);
+        }
+
+        private string GetServerPrefix(DiscordGuild guild)
+        {
+            if (guild == null) return null;
+            var settings = _guildSettingsCache.GetSettings(guild.Id);
+            return settings.Prefix;
+        }
 
         private async Task CommandsOnCommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
         {

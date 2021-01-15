@@ -9,6 +9,6 @@ namespace MyDiscordBot.Services
         public int ShardCount { get; set; } = 1;
         public DiscordIntents? Intents { get; set; }
         public LogLevel LogLevel { get; set; } = LogLevel.Information;
-        public string[] Prefixes { get; set; }
+        public string Prefix { get; set; }
     }
 }

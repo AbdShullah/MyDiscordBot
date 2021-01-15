@@ -13,7 +13,7 @@ namespace MyDiscordBot.Commands
     {
         [Command("info")]
         [Aliases("about")]
-        [Description("Information about this bot")]
+        [Description("Show information about this bot")]
         public async Task InformationCommand(CommandContext ctx)
         {
             var app = ctx.Client.CurrentApplication;

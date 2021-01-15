@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,8 @@ namespace MyDiscordBot
             var services = new ServiceCollection();
             ConfigureServices(services);
             await using var serviceProvider = services.BuildServiceProvider();
-
-            // Get Discord Client and connect
             var discord = serviceProvider.GetRequiredService<DiscordService>();
+
             await discord.Discord.ConnectAsync();
             await Task.Delay(Timeout.Infinite);
         }
@@ -44,8 +44,11 @@ namespace MyDiscordBot
                 // Singletons
                 .AddSingleton<DiscordService>()
                 // Database
-                .AddDbContext<BotContext>(options => options.UseSqlite(configuration.GetConnectionString("Default")))
-                // Logger is builded in DiscordService
+                .AddEFSecondLevelCache(options => options.UseMemoryCacheProvider().DisableLogging(true))
+                .AddDbContext<BotContext>((serviceProvider, options) => options
+                    .UseSqlite(configuration.GetConnectionString("Default"))
+                    .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>()))
+                // Logger is built in DiscordService
                 .AddLogging();
         }
     }

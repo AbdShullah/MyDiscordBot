@@ -13,11 +13,11 @@ namespace MyDiscordBot.Commands
         {
         }
 
-        public CommandException(string? message) : base(message)
+        public CommandException(string message) : base(message)
         {
         }
 
-        public CommandException(string? message, Exception? innerException) : base(message, innerException)
+        public CommandException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

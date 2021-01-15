@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,9 +44,10 @@ namespace MyDiscordBot
                 .AddSingleton<DiscordService>()
                 .AddSingleton<GuildSettingsCache>()
                 // Database
-                .AddMemoryCache()
+                .AddEFSecondLevelCache(options => options.UseMemoryCacheProvider().DisableLogging(true))
                 .AddDbContext<BotContext>((serviceProvider, options) => options
-                    .UseSqlite(configuration.GetConnectionString("Default")))
+                    .UseSqlite(configuration.GetConnectionString("Default"))
+                    .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>()))
                 // Logger is built in DiscordService
                 .AddLogging();
         }

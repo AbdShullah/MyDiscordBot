@@ -18,6 +18,11 @@ namespace MyDiscordBot.Data
                 .Entity<GuildSettings>()
                 .HasKey(x => x.GuildId);
 
+            modelBuilder
+                .Entity<GuildSettings>()
+                .Property(x => x.GuildId)
+                .HasConversion(x => (long) x, x => (ulong) x);
+
             base.OnModelCreating(modelBuilder);
         }
     }

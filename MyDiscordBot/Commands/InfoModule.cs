@@ -31,5 +31,16 @@ namespace MyDiscordBot.Commands
 
             await ctx.RespondAsync(embed: embedBuilder);
         }
+        
+        [Command("ping")]
+        [Description("Check ping")]
+        public async Task PingCommand(CommandContext ctx)
+        {
+            var msg = await ctx.RespondAsync("Ping!");
+            var time = DateTime.Now;
+            await msg.ModifyAsync("Pong!");
+            var timespan = DateTime.Now - time;
+            await ctx.RespondAsync($"Latency: {timespan.Milliseconds}");
+        }
     }
 }

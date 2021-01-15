@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using DSharpPlus.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +18,6 @@ namespace MyDiscordBot
             ConfigureServices(services);
             await using var serviceProvider = services.BuildServiceProvider();
             var discord = serviceProvider.GetRequiredService<DiscordService>();
-
             await discord.Discord.ConnectAsync();
             await Task.Delay(Timeout.Infinite);
         }

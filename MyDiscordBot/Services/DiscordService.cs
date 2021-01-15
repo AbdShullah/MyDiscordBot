@@ -43,7 +43,7 @@ namespace MyDiscordBot.Services
             // Interactivity configuration
             var interactivityConfiguration = new InteractivityConfiguration();
 
-            // Initalize objects
+            // Initialize objects
             Discord = new DiscordClient(discordConfiguration);
             Commands = Discord.UseCommandsNext(commandsConfiguration);
             Interactivity = Discord.UseInteractivity(interactivityConfiguration);

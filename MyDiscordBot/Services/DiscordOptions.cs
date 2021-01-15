@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DSharpPlus;
+﻿using DSharpPlus;
 using Microsoft.Extensions.Logging;
 
 namespace MyDiscordBot.Services
@@ -8,8 +7,8 @@ namespace MyDiscordBot.Services
     {
         public string? Token { get; set; }
         public int ShardCount { get; set; } = 1;
-        public DiscordIntents? Intents { get; set; } = null;
+        public DiscordIntents? Intents { get; set; }
         public LogLevel LogLevel { get; set; } = LogLevel.Information;
-        public IEnumerable<string>? Prefixes { get; set; }
+        public string[]? Prefixes { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyDiscordBot.Data;
 using MyDiscordBot.Services;
 using Serilog;
 
@@ -15,7 +17,7 @@ namespace MyDiscordBot
             var services = new ServiceCollection();
             ConfigureServices(services);
             await using var serviceProvider = services.BuildServiceProvider();
-            
+
             // Get Discord Client and connect
             var discord = serviceProvider.GetRequiredService<DiscordService>();
             await discord.Discord.ConnectAsync();
@@ -35,13 +37,14 @@ namespace MyDiscordBot
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration, "Serilog")
                 .CreateLogger();
-
             // Configure Services
             services
                 // Options
                 .Configure<DiscordOptions>(configuration.GetSection(nameof(DiscordOptions)))
                 // Singletons
                 .AddSingleton<DiscordService>()
+                // Database
+                .AddDbContext<BotContext>(options => options.UseSqlite(configuration.GetConnectionString("Default")))
                 // Logger is builded in DiscordService
                 .AddLogging();
         }

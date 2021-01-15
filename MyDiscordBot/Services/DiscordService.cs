@@ -55,6 +55,8 @@ namespace MyDiscordBot.Services
             Commands.RegisterCommands(Assembly.GetExecutingAssembly());
 
             // Subscribe to events
+            Discord.Ready += async (_, _) =>
+                await Discord.UpdateStatusAsync(new DiscordActivity(Prefix, ActivityType.ListeningTo));
             Commands.CommandErrored += CommandsOnCommandErrored;
         }
 
@@ -65,11 +67,11 @@ namespace MyDiscordBot.Services
         public string Prefix { get; init; }
 
 
-        private async Task<int> PrefixResolver(DiscordMessage message)
+        private Task<int> PrefixResolver(DiscordMessage message)
         {
             var prefix = GetServerPrefix(message.Channel.Guild);
             prefix ??= Prefix;
-            return message.GetStringPrefixLength(prefix);
+            return Task.FromResult(message.GetStringPrefixLength(prefix));
         }
 
         private string GetServerPrefix(DiscordGuild guild)

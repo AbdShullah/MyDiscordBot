@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DSharpPlus;
@@ -6,6 +7,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
+using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyDiscordBot.Commands;
@@ -16,17 +18,17 @@ namespace MyDiscordBot.Services
 {
     public class DiscordService
     {
-        private readonly GuildSettingsCache _guildSettingsCache;
+        private readonly BotContext _db;
         private readonly ILogger<DiscordService> _logger;
 
         public DiscordService(
             IServiceProvider services,
+            BotContext db,
             ILoggerFactory loggerFactory,
-            GuildSettingsCache guildSettingsCache,
             IOptions<DiscordOptions> options,
             ILogger<DiscordService> logger)
         {
-            _guildSettingsCache = guildSettingsCache;
+            _db = db;
             _logger = logger;
             // Discord configuration
             var discordOptions = options.Value;
@@ -55,8 +57,6 @@ namespace MyDiscordBot.Services
             Commands.RegisterCommands(Assembly.GetExecutingAssembly());
 
             // Subscribe to events
-            Discord.Ready += async (_, _) =>
-                await Discord.UpdateStatusAsync(new DiscordActivity(Prefix, ActivityType.ListeningTo));
             Commands.CommandErrored += CommandsOnCommandErrored;
         }
 
@@ -77,8 +77,8 @@ namespace MyDiscordBot.Services
         private string GetServerPrefix(DiscordGuild guild)
         {
             if (guild == null) return null;
-            var settings = _guildSettingsCache.GetSettings(guild.Id);
-            return settings.Prefix;
+            var settings = _db.GuildsSettings.Cacheable().FirstOrDefault(x => x.GuildId == guild.Id);
+            return settings?.Prefix;
         }
 
         private async Task CommandsOnCommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
@@ -91,8 +91,9 @@ namespace MyDiscordBot.Services
                 .WithColor(Colors.Error);
 
             if (e.Exception is not CommandException)
-                _logger.LogError("Command failed:\nName: {c}\nUser: {u}\nException: {e}",
-                    e.Command.Name, e.Context.User.Username, e.Exception);
+                _logger.LogError(e.Exception,
+                    "Command failed:\nName: {C}\nUser: {U}",
+                    e.Command.Name, e.Context.User.Username);
             await e.Context.RespondAsync(embed: embedBuilder);
         }
     }

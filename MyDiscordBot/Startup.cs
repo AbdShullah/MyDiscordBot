@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using DSharpPlus.Entities;
 using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +20,7 @@ namespace MyDiscordBot
             ConfigureServices(services);
             await using var serviceProvider = services.BuildServiceProvider();
             var discord = serviceProvider.GetRequiredService<DiscordService>();
-            await discord.Discord.ConnectAsync();
+            await discord.Discord.ConnectAsync(new DiscordActivity($"{discord.Prefix} help", ActivityType.ListeningTo));
             await Task.Delay(Timeout.Infinite);
         }
 
@@ -42,11 +43,11 @@ namespace MyDiscordBot
                 .Configure<DiscordOptions>(configuration.GetSection(nameof(DiscordOptions)))
                 // Singletons
                 .AddSingleton<DiscordService>()
-                .AddSingleton<GuildSettingsCache>()
                 // Database
                 .AddEFSecondLevelCache(options => options.UseMemoryCacheProvider().DisableLogging(true))
                 .AddDbContext<BotContext>((serviceProvider, options) => options
                     .UseSqlite(configuration.GetConnectionString("Default"))
+                    .EnableSensitiveDataLogging()
                     .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>()))
                 // Logger is built in DiscordService
                 .AddLogging();

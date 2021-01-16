@@ -31,7 +31,7 @@ namespace MyDiscordBot.Commands
 
             await ctx.RespondAsync(embed: embedBuilder);
         }
-        
+
         [Command("ping")]
         [Description("Check ping")]
         public async Task PingCommand(CommandContext ctx)

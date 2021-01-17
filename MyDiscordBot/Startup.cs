@@ -47,7 +47,6 @@ namespace MyDiscordBot
                 .AddEFSecondLevelCache(options => options.UseMemoryCacheProvider().DisableLogging(true))
                 .AddDbContext<BotContext>((serviceProvider, options) => options
                     .UseSqlite(configuration.GetConnectionString("Default"))
-                    .EnableSensitiveDataLogging()
                     .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>()))
                 // Logger is built in DiscordService
                 .AddLogging();

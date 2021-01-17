@@ -5,7 +5,6 @@ using DSharpPlus.Entities;
 using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using MyDiscordBot.Data;
-using MyDiscordBot.Data.Models;
 
 namespace MyDiscordBot.Commands
 {
@@ -37,12 +36,7 @@ namespace MyDiscordBot.Commands
             if (prefix != null && prefix.Length >= 32)
                 throw new CommandException("Prefix can't be longer than 32 characters.");
 
-            var settings = await Db.GuildsSettings.FindAsync(ctx.Guild.Id);
-            if (settings == null)
-            {
-                settings = new GuildSettings {GuildId = ctx.Guild.Id};
-                await Db.AddAsync(settings);
-            }
+            var settings = Db.GuildsSettings.FindOrCreate(ctx.Guild.Id);
 
             settings.Prefix = prefix;
             await Db.SaveChangesAsync();

@@ -5,11 +5,11 @@ namespace MyDiscordBot.Data
 {
     public static class BotContextExtensions
     {
-        public static GuildSettings FindOrCreate(this DbSet<GuildSettings> dbSet, ulong id)
+        public static T FindOrCreate<T>(this DbSet<T> dbSet, T alternative, params object[] keyValues) where T : class
         {
-            var settings = dbSet.Find(id);
+            var settings = dbSet.Find(keyValues);
             if (settings != null) return settings;
-            settings = new GuildSettings {GuildId = id};
+            settings = alternative;
             dbSet.Add(settings);
             return settings;
         }

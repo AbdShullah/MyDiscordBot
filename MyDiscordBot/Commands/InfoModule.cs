@@ -26,7 +26,6 @@ namespace MyDiscordBot.Commands
                 .AddField(".NET Version:", Environment.Version.ToString())
                 .AddField("OS:", Environment.OSVersion.ToString())
                 .AddField("CPU Count:", Environment.ProcessorCount.ToString())
-                .AddField("Total RAM Usage", $"{Process.GetCurrentProcess().WorkingSet64 / (1024 * 1024)} MB")
                 .AddField("GC RAM Usage", $"{GC.GetTotalMemory(true) / (1024 * 1024)} MB");
 
             await ctx.RespondAsync(embed: embedBuilder);

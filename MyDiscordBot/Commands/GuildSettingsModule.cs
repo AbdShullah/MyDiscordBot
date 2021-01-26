@@ -38,7 +38,7 @@ namespace MyDiscordBot.Commands
                 throw new CommandException("Prefix can't be longer than 32 characters.");
 
             var settings = Db.GuildsSettings.FindOrCreate(
-                new GuildSettings() {GuildId = ctx.Guild.Id},
+                new GuildSettings {GuildId = ctx.Guild.Id},
                 ctx.Guild.Id);
 
             settings.Prefix = prefix;

@@ -27,7 +27,7 @@ namespace MyDiscordBot.Commands
                 .WithColor(Colors.Information)
                 .AddField("Prefix:", settings?.Prefix ?? "Default");
 
-            await ctx.RespondAsync(embed: embedBuilder);
+            await ctx.RespondAsync(embedBuilder);
         }
 
         [Command("prefix")]

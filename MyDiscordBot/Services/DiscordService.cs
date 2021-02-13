@@ -94,7 +94,7 @@ namespace MyDiscordBot.Services
                 _logger.LogError(e.Exception,
                     "Command failed:\nName: {C}\nUser: {U}",
                     e.Command.Name, e.Context.User.Username);
-            await e.Context.RespondAsync(embed: embedBuilder);
+            await e.Context.RespondAsync(embedBuilder);
         }
     }
 }

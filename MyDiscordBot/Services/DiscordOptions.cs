@@ -7,7 +7,7 @@ namespace MyDiscordBot.Services
     {
         public string Token { get; set; }
         public int ShardCount { get; set; } = 1;
-        public DiscordIntents? Intents { get; set; }
+        public DiscordIntents Intents { get; set; } = DiscordIntents.AllUnprivileged;
         public LogLevel LogLevel { get; set; } = LogLevel.Information;
         public string Prefix { get; set; }
     }

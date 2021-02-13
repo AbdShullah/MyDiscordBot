@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
@@ -28,7 +27,7 @@ namespace MyDiscordBot.Commands
                 .AddField("CPU Count:", Environment.ProcessorCount.ToString())
                 .AddField("GC RAM Usage", $"{GC.GetTotalMemory(true) / (1024 * 1024)} MB");
 
-            await ctx.RespondAsync(embed: embedBuilder);
+            await ctx.RespondAsync(embedBuilder);
         }
 
         [Command("ping")]
